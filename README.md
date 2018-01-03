@@ -1,3 +1,3 @@
 # CSharpLox
 
-A C# implementation of the [Lox](https://github.com/munificent/craftinginterpreters) language compiler and interpreter.
+A compiler and interpreter .NET Standard C# implementation of the [Lox](https://github.com/munificent/craftinginterpreters) language.
