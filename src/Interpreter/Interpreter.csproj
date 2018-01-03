@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RootNamespace>CSharpLox</RootNamespace>
     <AssemblyName>clox</AssemblyName>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
 </Project>
