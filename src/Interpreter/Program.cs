@@ -6,6 +6,8 @@ namespace CSharpLox
 {
 	public class Program
 	{
+		private static bool _hadError = false;
+
 		public static async Task Main(string[] args)
 		{
 			if (args.Length > 1)
@@ -26,6 +28,10 @@ namespace CSharpLox
 		{
 			var source = await File.ReadAllTextAsync(filePath);
 			await RunAsync(source);
+			if (_hadError)
+			{
+				Environment.Exit(65);
+			}
 		}
 
 		private static Task RunPromptAsync()
@@ -34,6 +40,7 @@ namespace CSharpLox
 			{
 				Console.WriteLine("> ");
 				RunAsync(Console.ReadLine());
+				_hadError = false;
 			}
 		}
 
@@ -48,6 +55,17 @@ namespace CSharpLox
 			//{
 			//	Console.WriteLine(token);
 			//}
+		}
+
+		public static void Error(int line, string message)
+		{
+			Report(line, string.Empty, message);
+		}
+
+		private static void Report(int line, string where, string message)
+		{
+			Console.WriteLine("[line " + line + "] Error" + where + ": " + message);
+			_hadError = true;
 		}
 	}
 }
