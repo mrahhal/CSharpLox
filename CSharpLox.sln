@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\Core\Core.csproj", "{414D9717-66AD-412A-A38C-D3CB2A61646A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpreter", "src\Interpreter\Interpreter.csproj", "{DB9329F9-B202-449F-97C6-6937FDAD4589}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,12 +28,17 @@ Global
 		{414D9717-66AD-412A-A38C-D3CB2A61646A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{414D9717-66AD-412A-A38C-D3CB2A61646A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{414D9717-66AD-412A-A38C-D3CB2A61646A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB9329F9-B202-449F-97C6-6937FDAD4589}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB9329F9-B202-449F-97C6-6937FDAD4589}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB9329F9-B202-449F-97C6-6937FDAD4589}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB9329F9-B202-449F-97C6-6937FDAD4589}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{414D9717-66AD-412A-A38C-D3CB2A61646A} = {3DFA2DB0-CC79-4E93-B655-B503A58965E7}
+		{DB9329F9-B202-449F-97C6-6937FDAD4589} = {3DFA2DB0-CC79-4E93-B655-B503A58965E7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {82DBCCEE-41B3-496F-8D89-6FEEE536873D}
