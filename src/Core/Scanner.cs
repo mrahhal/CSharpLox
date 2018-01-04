@@ -50,11 +50,51 @@ namespace CSharpLox
 				case '+': AddToken(PLUS); break;
 				case ';': AddToken(SEMICOLON); break;
 				case '*': AddToken(STAR); break;
+				case '!': AddToken(Match('=') ? BANG_EQUAL : BANG); break;
+				case '=': AddToken(Match('=') ? EQUAL_EQUAL : EQUAL); break;
+				case '<': AddToken(Match('=') ? LESS_EQUAL : LESS); break;
+				case '>': AddToken(Match('=') ? GREATER_EQUAL : GREATER); break;
+				case '/':
+					if (Match('/'))
+					{
+						// A comment goes until the end of the line.
+						while (Peek() != '\n' && !IsAtEnd()) Advance();
+					}
+					else
+					{
+						AddToken(SLASH);
+					}
+					break;
+
+				case ' ':
+				case '\r':
+				case '\t':
+					// Ignore whitespace.
+					break;
+
+				case '\n':
+					_line++;
+					break;
 
 				default:
 					_logger.Error(_line, "Unexpected character.");
 					break;
 			}
+		}
+
+		private bool Match(char expected)
+		{
+			if (IsAtEnd()) return false;
+			if (Source[_current] != expected) return false;
+
+			_current++;
+			return true;
+		}
+
+		private char Peek()
+		{
+			if (IsAtEnd()) return '\0';
+			return Source[_current];
 		}
 
 		private bool IsAtEnd()
