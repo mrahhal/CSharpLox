@@ -103,7 +103,7 @@ namespace CSharpLox
 			Advance();
 
 			// Trim the surrounding quotes.
-			var value = Source.Substring(_start + 1, _current - 1);
+			var value = Substring(_start + 1, _current - 1);
 			AddToken(STRING, value);
 		}
 
@@ -140,8 +140,13 @@ namespace CSharpLox
 
 		private void AddToken(TokenType type, object literal)
 		{
-			var text = Source.Substring(_start, _current);
+			var text = Substring(_start, _current);
 			_tokens.Add(new Token(type, text, literal, _line));
+		}
+
+		private string Substring(int start, int end)
+		{
+			return Source.Substring(start, end - start);
 		}
 	}
 }
