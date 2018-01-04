@@ -12,7 +12,7 @@ namespace CSharpLox
 		{
 			if (args.Length > 1)
 			{
-				Console.WriteLine("Usage: clox [script]");
+				Console.WriteLine("Usage: cslox [script]");
 			}
 			else if (args.Length == 1)
 			{
