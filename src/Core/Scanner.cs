@@ -5,6 +5,26 @@ namespace CSharpLox
 {
 	public class Scanner
 	{
+		private static readonly Dictionary<string, TokenType> KeywordsMap = new Dictionary<string, TokenType>
+		{
+			{ "and", AND },
+			{ "class", CLASS },
+			{ "else", ELSE },
+			{ "false", FALSE },
+			{ "for", FOR },
+			{ "fun", FUN },
+			{ "if", IF },
+			{ "nil", NIL },
+			{ "or", OR },
+			{ "print", PRINT },
+			{ "return", RETURN },
+			{ "super", SUPER },
+			{ "this", THIS },
+			{ "true", TRUE },
+			{ "var", VAR },
+			{ "while", WHILE },
+		};
+
 		private readonly List<Token> _tokens = new List<Token>();
 		private int _start = 0;
 		private int _current = 0;
@@ -83,6 +103,10 @@ namespace CSharpLox
 					{
 						ScanNumber();
 					}
+					else if (IsAlpha(c))
+					{
+						ScanIdentifier();
+					}
 					else
 					{
 						_logger.Error(_line, "Unexpected character.");
@@ -136,6 +160,21 @@ namespace CSharpLox
 			}
 		}
 
+		private void ScanIdentifier()
+		{
+			while (IsAlphaNumeric(Peek())) Advance();
+
+			// See if the identifier is a reserved word.
+			var text = Substring(_start, _current);
+
+			var resolvedType = IDENTIFIER;
+			if (KeywordsMap.TryGetValue(text, out var type))
+			{
+				resolvedType = type;
+			}
+			AddToken(resolvedType);
+		}
+
 		private bool Match(char expected)
 		{
 			if (IsAtEnd()) return false;
@@ -155,6 +194,19 @@ namespace CSharpLox
 		{
 			if (_current + 1 >= Source.Length) return '\0';
 			return Source[_current + 1];
+		}
+
+		private bool IsAlpha(char c)
+		{
+			return
+				(c >= 'a' && c <= 'z') ||
+				(c >= 'A' && c <= 'Z') ||
+				c == '_';
+		}
+
+		private bool IsAlphaNumeric(char c)
+		{
+			return IsAlpha(c) || IsDigit(c);
 		}
 
 		private bool IsDigit(char c)
