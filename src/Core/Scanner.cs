@@ -79,7 +79,14 @@ namespace CSharpLox
 				case '"': ScanString(); break;
 
 				default:
-					_logger.Error(_line, "Unexpected character.");
+					if (IsDigit(c))
+					{
+						ScanNumber();
+					}
+					else
+					{
+						_logger.Error(_line, "Unexpected character.");
+					}
 					break;
 			}
 		}
@@ -107,6 +114,28 @@ namespace CSharpLox
 			AddToken(STRING, value);
 		}
 
+		private void ScanNumber()
+		{
+			PeekWhileIsDigit();
+
+			// Look for a fractional part.
+			if (Peek() == '.' && IsDigit(PeekNext()))
+			{
+				// Consume the "."
+				Advance();
+
+				PeekWhileIsDigit();
+			}
+
+			var literal = double.Parse(Substring(_start, _current));
+			AddToken(NUMBER, literal);
+
+			void PeekWhileIsDigit()
+			{
+				while (IsDigit(Peek())) Advance();
+			}
+		}
+
 		private bool Match(char expected)
 		{
 			if (IsAtEnd()) return false;
@@ -120,6 +149,17 @@ namespace CSharpLox
 		{
 			if (IsAtEnd()) return '\0';
 			return Source[_current];
+		}
+
+		private char PeekNext()
+		{
+			if (_current + 1 >= Source.Length) return '\0';
+			return Source[_current + 1];
+		}
+
+		private bool IsDigit(char c)
+		{
+			return c >= '0' && c <= '9';
 		}
 
 		private bool IsAtEnd()
