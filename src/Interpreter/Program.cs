@@ -4,19 +4,30 @@ using System.Threading.Tasks;
 
 namespace CSharpLox
 {
-	public class Program
+	public class Lox
 	{
-		private static bool _hadError = false;
+		private readonly ConsoleLogger _logger = new ConsoleLogger();
+		private string[] _args;
 
-		public static async Task Main(string[] args)
+		public static Task Main(string[] args)
 		{
-			if (args.Length > 1)
+			return new Lox(args).RunInternalAsync();
+		}
+
+		public Lox(string[] args)
+		{
+			_args = args;
+		}
+
+		private async Task RunInternalAsync()
+		{
+			if (_args.Length > 1)
 			{
 				Console.WriteLine("Usage: cslox [script]");
 			}
-			else if (args.Length == 1)
+			else if (_args.Length == 1)
 			{
-				await RunFileAsync(args[0]);
+				await RunFileAsync(_args[0]);
 			}
 			else
 			{
@@ -24,48 +35,37 @@ namespace CSharpLox
 			}
 		}
 
-		private static async Task RunFileAsync(string filePath)
+		private async Task RunFileAsync(string filePath)
 		{
 			var source = await File.ReadAllTextAsync(filePath);
 			await RunAsync(source);
-			if (_hadError)
+			if (_logger.HadError)
 			{
 				Environment.Exit(65);
 			}
 		}
 
-		private static Task RunPromptAsync()
+		private Task RunPromptAsync()
 		{
 			while (true)
 			{
 				Console.WriteLine("> ");
 				RunAsync(Console.ReadLine());
-				_hadError = false;
+				_logger.ResetError();
 			}
 		}
 
-		private static Task RunAsync(string source)
+		private Task RunAsync(string source)
 		{
-			throw new NotImplementedException();
+			var scanner = new Scanner(_logger, source);
+			var tokens = scanner.ScanTokens();
 
-			//var scanner = new Scanner(source);
-			//var tokens = scanner.ScanTokens();
+			foreach (var token in tokens)
+			{
+				Console.WriteLine(token);
+			}
 
-			//foreach (var token in tokens)
-			//{
-			//	Console.WriteLine(token);
-			//}
-		}
-
-		public static void Error(int line, string message)
-		{
-			Report(line, string.Empty, message);
-		}
-
-		private static void Report(int line, string where, string message)
-		{
-			Console.WriteLine("[line " + line + "] Error" + where + ": " + message);
-			_hadError = true;
+			return Task.CompletedTask;
 		}
 	}
 }
