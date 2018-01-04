@@ -76,10 +76,35 @@ namespace CSharpLox
 					_line++;
 					break;
 
+				case '"': ScanString(); break;
+
 				default:
 					_logger.Error(_line, "Unexpected character.");
 					break;
 			}
+		}
+
+		private void ScanString()
+		{
+			while (Peek() != '"' && !IsAtEnd())
+			{
+				if (Peek() == '\n') _line++;
+				Advance();
+			}
+
+			// Unterminated string.
+			if (IsAtEnd())
+			{
+				_logger.Error(_line, "Unterminated string.");
+				return;
+			}
+
+			// The closing ".
+			Advance();
+
+			// Trim the surrounding quotes.
+			var value = Source.Substring(_start + 1, _current - 1);
+			AddToken(STRING, value);
 		}
 
 		private bool Match(char expected)
