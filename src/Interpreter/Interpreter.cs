@@ -50,7 +50,10 @@ namespace CSharpLox
 
 		public object VisitAssignExpr(Expr.Assign expr)
 		{
-			throw new NotImplementedException();
+			var value = Evaluate(expr.Value);
+
+			_environment.Assign(expr.Name, value);
+			return value;
 		}
 
 		public object VisitBinaryExpr(Expr.Binary expr)

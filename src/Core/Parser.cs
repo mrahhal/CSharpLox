@@ -87,7 +87,28 @@ namespace CSharpLox
 
 		private Expr Expression()
 		{
-			return Equality();
+			return Assignment();
+		}
+
+		private Expr Assignment()
+		{
+			var expr = Equality();
+
+			if (Match(EQUAL))
+			{
+				var equals = Previous();
+				var value = Assignment();
+
+				if (expr is Expr.Variable variableExpr)
+				{
+					var name = variableExpr.Name;
+					return new Expr.Assign(name, value);
+				}
+
+				Error(equals, "Invalid assignment target.");
+			}
+
+			return expr;
 		}
 
 		private Expr Equality()
