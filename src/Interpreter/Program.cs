@@ -7,6 +7,7 @@ namespace CSharpLox
 	public class Lox
 	{
 		private readonly ConsoleLogger _logger = new ConsoleLogger();
+		private readonly Interpreter _interpreter;
 		private string[] _args;
 
 		public static Task Main(string[] args)
@@ -17,6 +18,8 @@ namespace CSharpLox
 		public Lox(string[] args)
 		{
 			_args = args;
+
+			_interpreter = new Interpreter(_logger);
 		}
 
 		private async Task RunInternalAsync()
@@ -42,6 +45,10 @@ namespace CSharpLox
 			if (_logger.HadError)
 			{
 				Environment.Exit(65);
+			}
+			if (_logger.HadRuntimeError)
+			{
+				Environment.Exit(70);
 			}
 		}
 
@@ -74,6 +81,10 @@ namespace CSharpLox
 			if (_logger.HadError) return Task.CompletedTask;
 
 			Console.WriteLine(new AstPrinterVisitor().Print(expression));
+
+			Console.WriteLine("===");
+
+			_interpreter.Interpret(expression);
 
 			return Task.CompletedTask;
 		}

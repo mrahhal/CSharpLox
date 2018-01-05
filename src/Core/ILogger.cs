@@ -4,9 +4,15 @@
 	{
 		bool HadError { get; }
 
+		bool HadRuntimeError { get; }
+
 		void Error(int line, string where, string message);
 
+		void RuntimeError(RuntimeError error);
+
 		void ResetError();
+
+		void ResetRuntimeError();
 	}
 
 	public static class LoggerExtensions
