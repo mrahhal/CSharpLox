@@ -56,7 +56,7 @@ namespace CSharpLox
 		{
 			while (true)
 			{
-				Console.WriteLine("> ");
+				Console.Write("> ");
 				RunAsync(Console.ReadLine());
 				_logger.ResetError();
 			}
