@@ -6,6 +6,8 @@ namespace CSharpLox
 {
 	public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 	{
+		private EnvironmentScope _environment = new EnvironmentScope();
+
 		private readonly ILogger _logger;
 
 		public Interpreter(
@@ -28,21 +30,6 @@ namespace CSharpLox
 				_logger.RuntimeError(error);
 			}
 		}
-
-		//public void Interpret(Expr expression)
-		//{
-		//	try
-		//	{
-		//		var value = Evaluate(expression);
-
-		//		// TODO: Return this instead?
-		//		Console.WriteLine(Stringify(value));
-		//	}
-		//	catch (RuntimeError error)
-		//	{
-		//		_logger.RuntimeError(error);
-		//	}
-		//}
 
 		private String Stringify(object obj)
 		{
@@ -181,7 +168,7 @@ namespace CSharpLox
 
 		public object VisitVariableExpr(Expr.Variable expr)
 		{
-			throw new NotImplementedException();
+			return _environment.Get(expr.Name);
 		}
 
 		private Object Evaluate(Expr expr)
@@ -260,7 +247,14 @@ namespace CSharpLox
 
 		public object VisitVarStmt(Stmt.Var stmt)
 		{
-			throw new NotImplementedException();
+			object value = null;
+			if (stmt.Initializer != null)
+			{
+				value = Evaluate(stmt.Initializer);
+			}
+
+			_environment.Define(stmt.Name.Lexeme, value);
+			return null;
 		}
 
 		public object VisitWhileStmt(Stmt.While stmt)
