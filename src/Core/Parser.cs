@@ -29,10 +29,39 @@ namespace CSharpLox
 			var statements = new List<Stmt>();
 			while (!IsAtEnd())
 			{
-				statements.Add(Statement());
+				statements.Add(Declaration());
 			}
 
 			return statements;
+		}
+
+		private Stmt Declaration()
+		{
+			try
+			{
+				if (Match(VAR)) return VarDeclaration();
+
+				return Statement();
+			}
+			catch (ParseError)
+			{
+				Synchronize();
+				return null;
+			}
+		}
+
+		private Stmt VarDeclaration()
+		{
+			var name = Consume(IDENTIFIER, "Expected variable name.");
+
+			Expr initializer = null;
+			if (Match(EQUAL))
+			{
+				initializer = Expression();
+			}
+
+			Consume(SEMICOLON, "Expected ';' after variable declaration.");
+			return new Stmt.Var(name, initializer);
 		}
 
 		private Stmt Statement()
@@ -126,6 +155,11 @@ namespace CSharpLox
 			if (Match(NUMBER, STRING))
 			{
 				return new Expr.Literal(Previous().Literal);
+			}
+
+			if (Match(IDENTIFIER))
+			{
+				return new Expr.Variable(Previous());
 			}
 
 			if (Match(LEFT_PAREN))
