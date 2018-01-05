@@ -19,7 +19,9 @@ operator   → "==" | "!=" | "<" | "<=" | ">" | ">="
 ## Expressions
 
 ```cfg
-expression     → equality ;
+expression     → assignment ;
+assignment     → identifier "=" assignment
+               | equality ;
 equality       → comparison ( ( "!=" | "==" ) comparison )* ;
 comparison     → addition ( ( ">" | ">=" | "<" | "<=" ) addition )* ;
 addition       → multiplication ( ( "-" | "+" ) multiplication )* ;
