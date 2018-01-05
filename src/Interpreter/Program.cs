@@ -65,6 +65,16 @@ namespace CSharpLox
 				Console.WriteLine(token);
 			}
 
+			Console.WriteLine("===");
+
+			var parser = new Parser(_logger, tokens);
+			var expression = parser.Parse();
+
+			// Stop if there was a syntax error.
+			if (_logger.HadError) return Task.CompletedTask;
+
+			Console.WriteLine(new AstPrinterVisitor().Print(expression));
+
 			return Task.CompletedTask;
 		}
 	}
