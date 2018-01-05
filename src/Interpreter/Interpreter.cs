@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using static CSharpLox.TokenType;
 
 namespace CSharpLox
 {
-	public class Interpreter : Expr.IVisitor<object>
+	public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 	{
 		private readonly ILogger _logger;
 
@@ -13,20 +14,35 @@ namespace CSharpLox
 			_logger = logger;
 		}
 
-		public void Interpret(Expr expression)
+		public void Interpret(List<Stmt> statements)
 		{
 			try
 			{
-				var value = Evaluate(expression);
-
-				// TODO: Return this instead?
-				Console.WriteLine(Stringify(value));
+				foreach (var statement in statements)
+				{
+					Execute(statement);
+				}
 			}
 			catch (RuntimeError error)
 			{
 				_logger.RuntimeError(error);
 			}
 		}
+
+		//public void Interpret(Expr expression)
+		//{
+		//	try
+		//	{
+		//		var value = Evaluate(expression);
+
+		//		// TODO: Return this instead?
+		//		Console.WriteLine(Stringify(value));
+		//	}
+		//	catch (RuntimeError error)
+		//	{
+		//		_logger.RuntimeError(error);
+		//	}
+		//}
 
 		private String Stringify(object obj)
 		{
@@ -202,6 +218,59 @@ namespace CSharpLox
 		{
 			if (left is double && right is Double) return;
 			throw new RuntimeError(op, "Operands must be numbers.");
+		}
+
+		public object VisitBlockStmt(Stmt.Block stmt)
+		{
+			throw new NotImplementedException();
+		}
+
+		public object VisitClassStmt(Stmt.Class stmt)
+		{
+			throw new NotImplementedException();
+		}
+
+		public object VisitExpressionStmt(Stmt.Expression stmt)
+		{
+			Evaluate(stmt.InnerExpression);
+			return null;
+		}
+
+		public object VisitFunctionStmt(Stmt.Function stmt)
+		{
+			throw new NotImplementedException();
+		}
+
+		public object VisitIfStmt(Stmt.If stmt)
+		{
+			throw new NotImplementedException();
+		}
+
+		public object VisitPrintStmt(Stmt.Print stmt)
+		{
+			var value = Evaluate(stmt.InnerExpression);
+			Console.WriteLine(Stringify(value));
+			return null;
+		}
+
+		public object VisitReturnStmt(Stmt.Return stmt)
+		{
+			throw new NotImplementedException();
+		}
+
+		public object VisitVarStmt(Stmt.Var stmt)
+		{
+			throw new NotImplementedException();
+		}
+
+		public object VisitWhileStmt(Stmt.While stmt)
+		{
+			throw new NotImplementedException();
+		}
+
+		private void Execute(Stmt stmt)
+		{
+			stmt.Accept(this);
 		}
 	}
 }

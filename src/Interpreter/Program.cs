@@ -67,24 +67,13 @@ namespace CSharpLox
 			var scanner = new Scanner(_logger, source);
 			var tokens = scanner.ScanTokens();
 
-			foreach (var token in tokens)
-			{
-				Console.WriteLine(token);
-			}
-
-			Console.WriteLine("===");
-
 			var parser = new Parser(_logger, tokens);
-			var expression = parser.Parse();
+			var statements = parser.Parse();
 
 			// Stop if there was a syntax error.
 			if (_logger.HadError) return Task.CompletedTask;
 
-			Console.WriteLine(new AstPrinterVisitor().Print(expression));
-
-			Console.WriteLine("===");
-
-			_interpreter.Interpret(expression);
+			_interpreter.Interpret(statements);
 
 			return Task.CompletedTask;
 		}
