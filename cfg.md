@@ -27,3 +27,15 @@ unary          → ( "!" | "-" ) unary
 primary        → NUMBER | STRING | "false" | "true" | "nil"
                | "(" expression ")" ;
 ```
+
+---
+
+```
+program   → statement* EOF ;
+
+statement → exprStmt
+          | printStmt ;
+
+exprStmt  → expression ";" ;
+printStmt → "print" expression ";" ;
+```
