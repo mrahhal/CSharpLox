@@ -15,5 +15,17 @@
 		{
 			logger.Error(line, string.Empty, message);
 		}
+
+		public static void Error(this ILogger logger, Token token, string message)
+		{
+			if (token.Type == TokenType.EOF)
+			{
+				logger.Error(token.Line, " at end", message);
+			}
+			else
+			{
+				logger.Error(token.Line, " at '" + token.Lexeme + "'", message);
+			}
+		}
 	}
 }
