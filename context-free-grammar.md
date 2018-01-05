@@ -1,6 +1,8 @@
 ﻿# Context-Free Grammar
 
-```
+## Expressions - First Attempt
+
+```cfg
 expression → literal
            | unary
            | binary
@@ -14,9 +16,9 @@ operator   → "==" | "!=" | "<" | "<=" | ">" | ">="
            | "+"  | "-"  | "*" | "/" ;
 ```
 
----
+## Expressions
 
-```
+```cfg
 expression     → equality ;
 equality       → comparison ( ( "!=" | "==" ) comparison )* ;
 comparison     → addition ( ( ">" | ">=" | "<" | "<=" ) addition )* ;
@@ -28,9 +30,9 @@ primary        → NUMBER | STRING | "false" | "true" | "nil"
                | "(" expression ")" ;
 ```
 
----
+## Statements
 
-```
+```cfg
 program   → statement* EOF ;
 
 statement → exprStmt
