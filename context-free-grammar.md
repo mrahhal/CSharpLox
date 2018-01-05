@@ -26,18 +26,25 @@ addition       → multiplication ( ( "-" | "+" ) multiplication )* ;
 multiplication → unary ( ( "/" | "*" ) unary )* ;
 unary          → ( "!" | "-" ) unary
                | primary ;
-primary        → NUMBER | STRING | "false" | "true" | "nil"
-               | "(" expression ")" ;
+primary        → "true" | "false" | "nil" | "this"
+               | NUMBER | STRING
+               | "(" expression ")"
+               | IDENTIFIER ;
 ```
 
 ## Statements
 
 ```cfg
-program   → statement* EOF ;
+program     → declaration* eof ;
 
-statement → exprStmt
-          | printStmt ;
+declaration → varDecl
+            | statement ;
 
-exprStmt  → expression ";" ;
-printStmt → "print" expression ";" ;
+varDecl     → "var" IDENTIFIER ( "=" expression )? ";" ;
+
+statement   → exprStmt
+            | printStmt ;
+
+exprStmt    → expression ";" ;
+printStmt   → "print" expression ";" ;
 ```
