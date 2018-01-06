@@ -114,7 +114,26 @@ namespace CSharpLox
 
 		public object VisitCallExpr(Expr.Call expr)
 		{
-			throw new NotImplementedException();
+			var callee = Evaluate(expr.Callee);
+
+			var arguments = new List<object>();
+			foreach (var argument in expr.Arguments)
+			{
+				arguments.Add(Evaluate(argument));
+			}
+
+			if (!(callee is ILoxCallable))
+			{
+				throw new RuntimeError(expr.Paren, "Can only call functions and classes.");
+			}
+
+			var function = (ILoxCallable)callee;
+			if (arguments.Count != function.Arity)
+			{
+				throw new RuntimeError(expr.Paren, $"Expected {function.Arity} arguments but got {arguments.Count}.");
+			}
+
+			return function.Call(this, arguments);
 		}
 
 		public object VisitGetExpr(Expr.Get expr)

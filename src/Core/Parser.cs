@@ -293,7 +293,46 @@ namespace CSharpLox
 				return new Expr.Unary(op, right);
 			}
 
-			return Primary();
+			return Call();
+		}
+
+		private Expr Call()
+		{
+			var expr = Primary();
+
+			while (true)
+			{
+				if (Match(LEFT_PAREN))
+				{
+					expr = FinishCall(expr);
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			return expr;
+		}
+
+		private Expr FinishCall(Expr callee)
+		{
+			var arguments = new List<Expr>();
+			if (!Check(RIGHT_PAREN))
+			{
+				do
+				{
+					if (arguments.Count >= 8)
+					{
+						Error(Peek(), "Cannot have more than 8 arguments.");
+					}
+					arguments.Add(Expression());
+				} while (Match(COMMA));
+			}
+
+			var paren = Consume(RIGHT_PAREN, "Expected ')' after arguments.");
+
+			return new Expr.Call(callee, paren, arguments);
 		}
 
 		private Expr Primary()
