@@ -212,7 +212,26 @@ namespace CSharpLox
 
 		public object VisitBlockStmt(Stmt.Block stmt)
 		{
-			throw new NotImplementedException();
+			ExecuteBlock(stmt.Statements, new EnvironmentScope(_environment));
+			return null;
+		}
+
+		private void ExecuteBlock(List<Stmt> statements, EnvironmentScope environment)
+		{
+			var previous = _environment;
+			try
+			{
+				_environment = environment;
+
+				foreach (var statement in statements)
+				{
+					Execute(statement);
+				}
+			}
+			finally
+			{
+				_environment = previous;
+			}
 		}
 
 		public object VisitClassStmt(Stmt.Class stmt)

@@ -6,6 +6,13 @@ namespace CSharpLox
 	{
 		private readonly Dictionary<string, object> _values = new Dictionary<string, object>();
 
+		public EnvironmentScope(EnvironmentScope enclosing = null)
+		{
+			Enclosing = enclosing;
+		}
+
+		public EnvironmentScope Enclosing { get; }
+
 		public void Define(string name, object value)
 		{
 			_values[name] = value;
@@ -18,6 +25,11 @@ namespace CSharpLox
 				return value;
 			}
 
+			if (Enclosing != null)
+			{
+				return Enclosing.Get(name);
+			}
+
 			throw new RuntimeError(name, "Undefined variable '" + name.Lexeme + "'.");
 		}
 
@@ -26,6 +38,12 @@ namespace CSharpLox
 			if (_values.ContainsKey(name.Lexeme))
 			{
 				_values[name.Lexeme] = value;
+				return;
+			}
+
+			if (Enclosing != null)
+			{
+				Enclosing.Assign(name, value);
 				return;
 			}
 

@@ -67,8 +67,22 @@ namespace CSharpLox
 		private Stmt Statement()
 		{
 			if (Match(PRINT)) return PrintStatement();
+			if (Match(LEFT_BRACE)) return new Stmt.Block(Block());
 
 			return ExpressionStatement();
+		}
+
+		private List<Stmt> Block()
+		{
+			var statements = new List<Stmt>();
+
+			while (!Check(RIGHT_BRACE) && !IsAtEnd())
+			{
+				statements.Add(Declaration());
+			}
+
+			Consume(RIGHT_BRACE, "Expected '}' after block.");
+			return statements;
 		}
 
 		private Stmt PrintStatement()
