@@ -16,12 +16,33 @@ operator   → "==" | "!=" | "<" | "<=" | ">" | ">="
            | "+"  | "-"  | "*" | "/" ;
 ```
 
-## Expressions
+## Current
 
 ```cfg
+program        → declaration* eof ;
+
+declaration    → varDecl
+               | statement ;
+
+varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
+
+statement      → exprStmt
+               | ifStmt
+               | printStmt
+               | block ;
+
+ifStmt         → "if" "(" expression ")" statement ( "else" statement )? ;
+
+block          → "{" declaration* "}" ;
+
+exprStmt       → expression ";" ;
+printStmt      → "print" expression ";" ;
+
 expression     → assignment ;
 assignment     → identifier "=" assignment
-               | equality ;
+               | logic_or ;
+logic_or       → logic_and ( "or" logic_and )* ;
+logic_and      → equality ( "and" equality )* ;
 equality       → comparison ( ( "!=" | "==" ) comparison )* ;
 comparison     → addition ( ( ">" | ">=" | "<" | "<=" ) addition )* ;
 addition       → multiplication ( ( "-" | "+" ) multiplication )* ;
@@ -32,24 +53,4 @@ primary        → "true" | "false" | "nil" | "this"
                | NUMBER | STRING
                | "(" expression ")"
                | IDENTIFIER ;
-```
-
-## Statements
-
-```cfg
-program     → declaration* eof ;
-
-declaration → varDecl
-            | statement ;
-
-varDecl     → "var" IDENTIFIER ( "=" expression )? ";" ;
-
-statement   → exprStmt
-            | printStmt
-            | block ;
-
-block       → "{" declaration* "}" ;
-
-exprStmt    → expression ";" ;
-printStmt   → "print" expression ";" ;
 ```

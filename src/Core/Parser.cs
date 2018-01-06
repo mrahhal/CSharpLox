@@ -66,6 +66,7 @@ namespace CSharpLox
 
 		private Stmt Statement()
 		{
+			if (Match(IF)) return IfStatement();
 			if (Match(PRINT)) return PrintStatement();
 			if (Match(LEFT_BRACE)) return new Stmt.Block(Block());
 
@@ -83,6 +84,22 @@ namespace CSharpLox
 
 			Consume(RIGHT_BRACE, "Expected '}' after block.");
 			return statements;
+		}
+
+		private Stmt IfStatement() {
+			Consume(LEFT_PAREN, "Expected '(' after 'if'.");
+			var condition = Expression();
+			Consume(RIGHT_PAREN, "Expected ')' after if condition.");
+
+			var thenBranch = Statement();
+			var elseBranch = default(Stmt);
+
+			if (Match(ELSE))
+			{
+				elseBranch = Statement();
+			}
+
+			return new Stmt.If(condition, thenBranch, elseBranch);
 		}
 
 		private Stmt PrintStatement()
@@ -106,7 +123,7 @@ namespace CSharpLox
 
 		private Expr Assignment()
 		{
-			var expr = Equality();
+			var expr = Or();
 
 			if (Match(EQUAL))
 			{
@@ -120,6 +137,34 @@ namespace CSharpLox
 				}
 
 				Error(equals, "Invalid assignment target.");
+			}
+
+			return expr;
+		}
+
+		private Expr Or()
+		{
+			var expr = And();
+
+			while (Match(OR))
+			{
+				var op = Previous();
+				var right = And();
+				expr = new Expr.Logical(expr, op, right);
+			}
+
+			return expr;
+		}
+
+		private Expr And()
+		{
+			var expr = Equality();
+
+			while (Match(AND))
+			{
+				var op = Previous();
+				var right = Equality();
+				expr = new Expr.Logical(expr, op, right);
 			}
 
 			return expr;

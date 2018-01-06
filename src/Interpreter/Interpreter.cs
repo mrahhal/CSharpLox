@@ -134,7 +134,18 @@ namespace CSharpLox
 
 		public object VisitLogicalExpr(Expr.Logical expr)
 		{
-			throw new NotImplementedException();
+			var left = Evaluate(expr.Left);
+
+			if (expr.Operator.Type == OR)
+			{
+				if (IsTruthy(left)) return left;
+			}
+			else
+			{
+				if (!IsTruthy(left)) return left;
+			}
+
+			return Evaluate(expr.Right);
 		}
 
 		public object VisitSetExpr(Expr.Set expr)
@@ -252,7 +263,15 @@ namespace CSharpLox
 
 		public object VisitIfStmt(Stmt.If stmt)
 		{
-			throw new NotImplementedException();
+			if (IsTruthy(Evaluate(stmt.Condition)))
+			{
+				Execute(stmt.ThenBranch);
+			}
+			else if (stmt.ElseBranch != null)
+			{
+				Execute(stmt.ElseBranch);
+			}
+			return null;
 		}
 
 		public object VisitPrintStmt(Stmt.Print stmt)
