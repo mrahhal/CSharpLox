@@ -5,9 +5,16 @@ namespace CSharpLox
 {
 	public class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
 	{
+		private enum FunctionType
+		{
+			NONE,
+			FUNCTION
+		}
+
 		private readonly Interpreter _interpreter;
 		private readonly ILogger _logger;
 		private readonly Stack<Dictionary<string, bool>> _scopes = new Stack<Dictionary<string, bool>>();
+		private FunctionType _currentFunction = FunctionType.NONE;
 
 		public Resolver(
 			Interpreter interpreter,
@@ -75,7 +82,7 @@ namespace CSharpLox
 			Declare(stmt.Name);
 			Define(stmt.Name);
 
-			ResolveFunction(stmt);
+			ResolveFunction(stmt, FunctionType.FUNCTION);
 			return null;
 		}
 
@@ -118,6 +125,11 @@ namespace CSharpLox
 
 		public object VisitReturnStmt(Stmt.Return stmt)
 		{
+			if (_currentFunction == FunctionType.NONE)
+			{
+				_logger.Error(stmt.Keyword, "Cannot return from top-level code.");
+			}
+
 			if (stmt.Value != null)
 			{
 				Resolve(stmt.Value);
@@ -192,6 +204,12 @@ namespace CSharpLox
 			if (_scopes.Count == 0) return;
 
 			var scope = _scopes.Peek();
+			if (scope.ContainsKey(name.Lexeme))
+			{
+				_logger.Error(name,
+					"Variable with this name already declared in this scope.");
+			}
+
 			scope[name.Lexeme] = false;
 		}
 
@@ -216,8 +234,11 @@ namespace CSharpLox
 			// Not found. Assume it is global.
 		}
 
-		private void ResolveFunction(Stmt.Function function)
+		private void ResolveFunction(Stmt.Function function, FunctionType type)
 		{
+			var enclosingFunction = _currentFunction;
+			_currentFunction = type;
+
 			BeginScope();
 			foreach (var param in function.Parameters)
 			{
@@ -226,6 +247,8 @@ namespace CSharpLox
 			}
 			Resolve(function.Body);
 			EndScope();
+
+			_currentFunction = enclosingFunction;
 		}
 
 		private void Resolve(Stmt stmt)

@@ -87,6 +87,8 @@ namespace CSharpLox
 			var resolver = new Resolver(_interpreter, _logger);
 			resolver.Resolve(statements);
 
+			if (_logger.HadError) return Task.CompletedTask;
+
 			_interpreter.Interpret(statements);
 
 			return Task.CompletedTask;
