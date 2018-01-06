@@ -8,6 +8,7 @@ namespace CSharpLox
 	{
 		private readonly EnvironmentScope _globals = new EnvironmentScope();
 		private EnvironmentScope _environment;
+		private Dictionary<Expr, int> _locals = new Dictionary<Expr, int>();
 
 		private readonly ILogger _logger;
 
@@ -45,6 +46,11 @@ namespace CSharpLox
 			}
 		}
 
+		public void Resolve(Expr expr, int depth)
+		{
+			_locals[expr] = depth;
+		}
+
 		private String Stringify(object obj)
 		{
 			if (obj == null) return "nil";
@@ -66,7 +72,15 @@ namespace CSharpLox
 		{
 			var value = Evaluate(expr.Value);
 
-			_environment.Assign(expr.Name, value);
+			if (_locals.TryGetValue(expr, out var distance))
+			{
+				_environment.AssignAt(distance, expr.Name, value);
+			}
+			else
+			{
+				_globals.Assign(expr.Name, value);
+			}
+
 			return value;
 		}
 
@@ -215,7 +229,16 @@ namespace CSharpLox
 
 		public object VisitVariableExpr(Expr.Variable expr)
 		{
-			return _environment.Get(expr.Name);
+			return LookUpVariable(expr.Name, expr);
+		}
+
+		private object LookUpVariable(Token name, Expr expr)
+		{
+			if (_locals.TryGetValue(expr, out var distance))
+			{
+				return _environment.GetAt(distance, name.Lexeme);
+			}
+			return _globals.Get(name);
 		}
 
 		private object Evaluate(Expr expr)

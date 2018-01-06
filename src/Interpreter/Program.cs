@@ -84,6 +84,9 @@ namespace CSharpLox
 			// Stop if there was a syntax error.
 			if (_logger.HadError) return Task.CompletedTask;
 
+			var resolver = new Resolver(_interpreter, _logger);
+			resolver.Resolve(statements);
+
 			_interpreter.Interpret(statements);
 
 			return Task.CompletedTask;
