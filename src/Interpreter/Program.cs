@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CSharpLox
@@ -57,9 +58,19 @@ namespace CSharpLox
 			while (true)
 			{
 				Console.Write("> ");
-				RunAsync(Console.ReadLine());
+				RunAsync(ReadConsoleInput());
 				_logger.ResetError();
 			}
+		}
+
+		private string ReadConsoleInput()
+		{
+			var builder = new StringBuilder();
+
+			// TODO
+			builder.Append(Console.ReadLine());
+
+			return builder.ToString();
 		}
 
 		private Task RunAsync(string source)
