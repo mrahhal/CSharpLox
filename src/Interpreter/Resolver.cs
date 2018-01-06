@@ -266,12 +266,14 @@ namespace CSharpLox
 
 		private void ResolveLocal(Expr expr, Token name)
 		{
+			// Stack.ToArray returns a reversed array. The first pushed item will be the last in the array.
 			var scopes = _scopes.ToArray();
-			for (var i = scopes.Length - 1; i >= 0; i--)
+
+			for (var i = 0; i < scopes.Length; i++)
 			{
 				if (scopes[i].ContainsKey(name.Lexeme))
 				{
-					_interpreter.Resolve(expr, scopes.Length - 1 - i);
+					_interpreter.Resolve(expr, i);
 					return;
 				}
 			}
