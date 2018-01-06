@@ -206,13 +206,29 @@ namespace CSharpLox
 
 		public object VisitVariableExpr(Expr.Variable expr)
 		{
-			if (_scopes.Count != 0 && _scopes.Peek()[expr.Name.Lexeme] == false)
+			if (IsDeclaredExact(expr.Name.Lexeme, false) == true)
 			{
 				_logger.Error(expr.Name,
 					"Cannot read local variable in its own initializer.");
 			}
 
 			ResolveLocal(expr, expr.Name);
+			return null;
+		}
+
+		private bool? IsDeclaredExact(string name, bool value)
+		{
+			if (_scopes.TryPeek(out var scope))
+			{
+				if (scope.TryGetValue(name, out var v))
+				{
+					return v == value;
+				}
+				else
+				{
+					return null;
+				}
+			}
 			return null;
 		}
 
