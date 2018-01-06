@@ -2,3 +2,4 @@
 artifacts/
 [Bb]in/
 [Oo]bj/
+src/Interpreter/Properties/launchSettings.json
