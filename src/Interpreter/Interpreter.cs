@@ -28,6 +28,8 @@ namespace CSharpLox
 			_logger = logger;
 		}
 
+		public EnvironmentScope GlobalScope => _globals;
+
 		public void Interpret(List<Stmt> statements)
 		{
 			try
@@ -258,7 +260,7 @@ namespace CSharpLox
 			return null;
 		}
 
-		private void ExecuteBlock(List<Stmt> statements, EnvironmentScope environment)
+		public void ExecuteBlock(List<Stmt> statements, EnvironmentScope environment)
 		{
 			var previous = _environment;
 			try
@@ -289,7 +291,9 @@ namespace CSharpLox
 
 		public object VisitFunctionStmt(Stmt.Function stmt)
 		{
-			throw new NotImplementedException();
+			var function = new LoxFunction(stmt, _environment);
+			_environment.Define(stmt.Name.Lexeme, function);
+			return null;
 		}
 
 		public object VisitIfStmt(Stmt.If stmt)
@@ -314,7 +318,13 @@ namespace CSharpLox
 
 		public object VisitReturnStmt(Stmt.Return stmt)
 		{
-			throw new NotImplementedException();
+			object value = null;
+			if (stmt.Value != null)
+			{
+				value = Evaluate(stmt.Value);
+			}
+
+			throw new Return(value);
 		}
 
 		public object VisitVarStmt(Stmt.Var stmt)

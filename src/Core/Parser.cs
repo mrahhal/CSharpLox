@@ -39,6 +39,7 @@ namespace CSharpLox
 		{
 			try
 			{
+				if (Match(FUN)) return Function("function");
 				if (Match(VAR)) return VarDeclaration();
 
 				return Statement();
@@ -48,6 +49,31 @@ namespace CSharpLox
 				Synchronize();
 				return null;
 			}
+		}
+
+		private Stmt.Function Function(string kind)
+		{
+			var name = Consume(IDENTIFIER, $"Expected {kind} name.");
+			Consume(LEFT_PAREN, $"Expected '(' after {kind} name.");
+			var parameters = new List<Token>();
+			if (!Check(RIGHT_PAREN))
+			{
+				do
+				{
+					if (parameters.Count >= 8)
+					{
+						Error(Peek(), "Cannot have more than 8 parameters.");
+					}
+
+					parameters.Add(Consume(IDENTIFIER, "Expected parameter name."));
+				} while (Match(COMMA));
+			}
+			Consume(RIGHT_PAREN, "Expected ')' after parameters.");
+			Consume(LEFT_BRACE, "Expected '{' before " + kind + " body.");
+
+			var body = Block();
+
+			return new Stmt.Function(name, parameters, body);
 		}
 
 		private Stmt VarDeclaration()
@@ -69,6 +95,7 @@ namespace CSharpLox
 			if (Match(FOR)) return ForStatement();
 			if (Match(IF)) return IfStatement();
 			if (Match(PRINT)) return PrintStatement();
+			if (Match(RETURN)) return ReturnStatement();
 			if (Match(WHILE)) return WhileStatement();
 			if (Match(LEFT_BRACE)) return new Stmt.Block(Block());
 
@@ -167,6 +194,19 @@ namespace CSharpLox
 			var value = Expression();
 			Consume(SEMICOLON, "Expected ';' after value.");
 			return new Stmt.Print(value);
+		}
+
+		private Stmt ReturnStatement()
+		{
+			var keyword = Previous();
+			Expr value = null;
+			if (!Check(SEMICOLON))
+			{
+				value = Expression();
+			}
+
+			Consume(SEMICOLON, "Expected ';' after return value.");
+			return new Stmt.Return(keyword, value);
 		}
 
 		private Stmt WhileStatement()
