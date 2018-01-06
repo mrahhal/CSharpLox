@@ -6,12 +6,24 @@ namespace CSharpLox
 {
 	public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object>
 	{
-		private EnvironmentScope _environment = new EnvironmentScope();
+		private readonly EnvironmentScope _globals = new EnvironmentScope();
+		private EnvironmentScope _environment;
 
 		private readonly ILogger _logger;
 
+		public Interpreter()
+		{
+			_environment = _globals;
+
+			_globals.Define("clock", NativeLoxCallable.Create((i, args) =>
+			{
+				return DateTimeOffset.Now.ToUnixTimeSeconds();
+			}, 0));
+		}
+
 		public Interpreter(
 			ILogger logger)
+			: this()
 		{
 			_logger = logger;
 		}
