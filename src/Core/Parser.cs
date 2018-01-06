@@ -68,6 +68,7 @@ namespace CSharpLox
 		{
 			if (Match(IF)) return IfStatement();
 			if (Match(PRINT)) return PrintStatement();
+			if (Match(WHILE)) return WhileStatement();
 			if (Match(LEFT_BRACE)) return new Stmt.Block(Block());
 
 			return ExpressionStatement();
@@ -86,7 +87,8 @@ namespace CSharpLox
 			return statements;
 		}
 
-		private Stmt IfStatement() {
+		private Stmt IfStatement()
+		{
 			Consume(LEFT_PAREN, "Expected '(' after 'if'.");
 			var condition = Expression();
 			Consume(RIGHT_PAREN, "Expected ')' after if condition.");
@@ -107,6 +109,16 @@ namespace CSharpLox
 			var value = Expression();
 			Consume(SEMICOLON, "Expected ';' after value.");
 			return new Stmt.Print(value);
+		}
+
+		private Stmt WhileStatement()
+		{
+			Consume(LEFT_PAREN, "Expected '(' after 'while'.");
+			var condition = Expression();
+			Consume(RIGHT_PAREN, "Expected ')' after condition.");
+			var body = Statement();
+
+			return new Stmt.While(condition, body);
 		}
 
 		private Stmt ExpressionStatement()

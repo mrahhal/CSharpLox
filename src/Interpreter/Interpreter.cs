@@ -185,7 +185,7 @@ namespace CSharpLox
 			return _environment.Get(expr.Name);
 		}
 
-		private Object Evaluate(Expr expr)
+		private object Evaluate(Expr expr)
 		{
 			return expr.Accept(this);
 		}
@@ -300,7 +300,11 @@ namespace CSharpLox
 
 		public object VisitWhileStmt(Stmt.While stmt)
 		{
-			throw new NotImplementedException();
+			while (IsTruthy(Evaluate(stmt.Condition)))
+			{
+				Execute(stmt.Body);
+			}
+			return null;
 		}
 
 		private void Execute(Stmt stmt)
