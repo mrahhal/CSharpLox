@@ -39,6 +39,7 @@ namespace CSharpLox
 		{
 			try
 			{
+				if (Match(CLASS)) return ClassDeclaration();
 				if (Match(FUN)) return Function("function");
 				if (Match(VAR)) return VarDeclaration();
 
@@ -49,6 +50,22 @@ namespace CSharpLox
 				Synchronize();
 				return null;
 			}
+		}
+
+		private Stmt ClassDeclaration()
+		{
+			var name = Consume(IDENTIFIER, "Expected class name.");
+			Consume(LEFT_BRACE, "Expected '{' before class body.");
+
+			var methods = new List<Stmt.Function>();
+			while (!Check(RIGHT_BRACE) && !IsAtEnd())
+			{
+				methods.Add(Function("method"));
+			}
+
+			Consume(RIGHT_BRACE, "Expected '}' after class body.");
+
+			return new Stmt.Class(name, null, methods);
 		}
 
 		private Stmt.Function Function(string kind)
@@ -245,6 +262,10 @@ namespace CSharpLox
 					var name = variableExpr.Name;
 					return new Expr.Assign(name, value);
 				}
+				else if (expr is Expr.Get getExpr)
+				{
+					return new Expr.Set(getExpr.Object, getExpr.Name, value);
+				}
 
 				Error(equals, "Invalid assignment target.");
 			}
@@ -346,6 +367,11 @@ namespace CSharpLox
 				{
 					expr = FinishCall(expr);
 				}
+				else if (Match(DOT))
+				{
+					var name = Consume(IDENTIFIER, "Expected property name after '.'.");
+					expr = new Expr.Get(expr, name);
+				}
 				else
 				{
 					break;
@@ -385,6 +411,8 @@ namespace CSharpLox
 			{
 				return new Expr.Literal(Previous().Literal);
 			}
+
+			if (Match(THIS)) return new Expr.This(Previous());
 
 			if (Match(IDENTIFIER))
 			{

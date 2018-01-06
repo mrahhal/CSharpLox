@@ -8,13 +8,22 @@ namespace CSharpLox
 		private enum FunctionType
 		{
 			NONE,
-			FUNCTION
+			FUNCTION,
+			METHOD,
+			INITIALIZER
+		}
+
+		private enum ClassType
+		{
+			NONE,
+			CLASS
 		}
 
 		private readonly Interpreter _interpreter;
 		private readonly ILogger _logger;
 		private readonly Stack<Dictionary<string, bool>> _scopes = new Stack<Dictionary<string, bool>>();
 		private FunctionType _currentFunction = FunctionType.NONE;
+		private ClassType _currentClass = ClassType.NONE;
 
 		public Resolver(
 			Interpreter interpreter,
@@ -68,7 +77,29 @@ namespace CSharpLox
 
 		public object VisitClassStmt(Stmt.Class stmt)
 		{
-			throw new NotImplementedException();
+			Declare(stmt.Name);
+			Define(stmt.Name);
+
+			var enclosingClass = _currentClass;
+			_currentClass = ClassType.CLASS;
+
+			BeginScope();
+			_scopes.Peek()["this"] = true;
+
+			foreach (var method in stmt.Methods)
+			{
+				var declaration = FunctionType.METHOD;
+				if (method.Name.Lexeme == "init")
+				{
+					declaration = FunctionType.INITIALIZER;
+				}
+				ResolveFunction(method, declaration);
+			}
+
+			EndScope();
+
+			_currentClass = enclosingClass;
+			return null;
 		}
 
 		public object VisitExpressionStmt(Stmt.Expression stmt)
@@ -88,7 +119,8 @@ namespace CSharpLox
 
 		public object VisitGetExpr(Expr.Get expr)
 		{
-			throw new NotImplementedException();
+			Resolve(expr.Object);
+			return null;
 		}
 
 		public object VisitGroupingExpr(Expr.Grouping expr)
@@ -132,6 +164,10 @@ namespace CSharpLox
 
 			if (stmt.Value != null)
 			{
+				if (_currentFunction == FunctionType.INITIALIZER)
+				{
+					_logger.Error(stmt.Keyword, "Cannot return a value from an initializer.");
+				}
 				Resolve(stmt.Value);
 			}
 
@@ -140,7 +176,9 @@ namespace CSharpLox
 
 		public object VisitSetExpr(Expr.Set expr)
 		{
-			throw new NotImplementedException();
+			Resolve(expr.Value);
+			Resolve(expr.Object);
+			return null;
 		}
 
 		public object VisitSuperExpr(Expr.Super expr)
@@ -150,7 +188,14 @@ namespace CSharpLox
 
 		public object VisitThisExpr(Expr.This expr)
 		{
-			throw new NotImplementedException();
+			if (_currentClass == ClassType.NONE)
+			{
+				_logger.Error(expr.Keyword, "Cannot use 'this' outside of a class.");
+				return null;
+			}
+
+			ResolveLocal(expr, expr.Keyword);
+			return null;
 		}
 
 		public object VisitUnaryExpr(Expr.Unary expr)

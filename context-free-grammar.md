@@ -21,9 +21,12 @@ operator   → "==" | "!=" | "<" | "<=" | ">" | ">="
 ```cfg
 program        → declaration* eof ;
 
-declaration    → funDecl
+declaration    → classDecl
+               | funDecl
                | varDecl
                | statement ;
+
+classDecl      → "class" IDENTIFIER "{" function* "}" ;
 
 funDecl        → "fun" function ;
 function       → IDENTIFIER "(" parameters? ")" block ;
@@ -55,8 +58,8 @@ exprStmt       → expression ";" ;
 printStmt      → "print" expression ";" ;
 
 expression     → assignment ;
-assignment     → identifier "=" assignment
-               | logic_or ;
+assignment     → ( call "." )? IDENTIFIER "=" assignment
+               | logic_or;
 logic_or       → logic_and ( "or" logic_and )* ;
 logic_and      → equality ( "and" equality )* ;
 equality       → comparison ( ( "!=" | "==" ) comparison )* ;
@@ -64,7 +67,7 @@ comparison     → addition ( ( ">" | ">=" | "<" | "<=" ) addition )* ;
 addition       → multiplication ( ( "-" | "+" ) multiplication )* ;
 multiplication → unary ( ( "/" | "*" ) unary )* ;
 unary          → ( "!" | "-" ) unary | call ;
-call           → primary ( "(" arguments? ")" )* ;
+call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
 arguments      → expression ( "," expression )* ;
 primary        → "true" | "false" | "nil" | "this"
                | NUMBER | STRING

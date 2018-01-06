@@ -166,7 +166,12 @@ namespace CSharpLox
 
 		public object VisitGetExpr(Expr.Get expr)
 		{
-			throw new NotImplementedException();
+			var @object = Evaluate(expr.Object);
+			if (@object is LoxInstance loxInstance) {
+				return loxInstance.Get(expr.Name);
+			}
+
+			throw new RuntimeError(expr.Name, "Only instances have properties.");
 		}
 
 		public object VisitGroupingExpr(Expr.Grouping expr)
@@ -197,7 +202,16 @@ namespace CSharpLox
 
 		public object VisitSetExpr(Expr.Set expr)
 		{
-			throw new NotImplementedException();
+			var @object = Evaluate(expr.Object);
+
+			if (!(@object is LoxInstance instance))
+			{
+				throw new RuntimeError(expr.Name, "Only instances have fields.");
+			}
+
+			var value = Evaluate(expr.Value);
+			instance.Set(expr.Name, value);
+			return value;
 		}
 
 		public object VisitSuperExpr(Expr.Super expr)
@@ -207,7 +221,7 @@ namespace CSharpLox
 
 		public object VisitThisExpr(Expr.This expr)
 		{
-			throw new NotImplementedException();
+			return LookUpVariable(expr.Keyword, expr);
 		}
 
 		public object VisitUnaryExpr(Expr.Unary expr)
@@ -303,7 +317,17 @@ namespace CSharpLox
 
 		public object VisitClassStmt(Stmt.Class stmt)
 		{
-			throw new NotImplementedException();
+			_environment.Define(stmt.Name.Lexeme, null);
+			var methods = new Dictionary<string, LoxFunction>();
+			foreach (var method in stmt.Methods)
+			{
+				var function = new LoxFunction(method, _environment, method.Name.Lexeme == "init");
+				methods[method.Name.Lexeme] = function;
+			}
+
+			var klass = new LoxClass(stmt.Name.Lexeme, methods);
+			_environment.Assign(stmt.Name, klass);
+			return null;
 		}
 
 		public object VisitExpressionStmt(Stmt.Expression stmt)
@@ -314,7 +338,7 @@ namespace CSharpLox
 
 		public object VisitFunctionStmt(Stmt.Function stmt)
 		{
-			var function = new LoxFunction(stmt, _environment);
+			var function = new LoxFunction(stmt, _environment, false);
 			_environment.Define(stmt.Name.Lexeme, function);
 			return null;
 		}
