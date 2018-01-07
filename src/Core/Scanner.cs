@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using static CSharpLox.TokenType;
 
 namespace CSharpLox
@@ -175,56 +176,6 @@ namespace CSharpLox
 			AddToken(resolvedType);
 		}
 
-		private bool Match(char expected)
-		{
-			if (IsAtEnd()) return false;
-			if (Source[_current] != expected) return false;
-
-			_current++;
-			return true;
-		}
-
-		private char Peek()
-		{
-			if (IsAtEnd()) return '\0';
-			return Source[_current];
-		}
-
-		private char PeekNext()
-		{
-			if (_current + 1 >= Source.Length) return '\0';
-			return Source[_current + 1];
-		}
-
-		private bool IsAlpha(char c)
-		{
-			return
-				(c >= 'a' && c <= 'z') ||
-				(c >= 'A' && c <= 'Z') ||
-				c == '_';
-		}
-
-		private bool IsAlphaNumeric(char c)
-		{
-			return IsAlpha(c) || IsDigit(c);
-		}
-
-		private bool IsDigit(char c)
-		{
-			return c >= '0' && c <= '9';
-		}
-
-		private bool IsAtEnd()
-		{
-			return _current >= Source.Length;
-		}
-
-		private char Advance()
-		{
-			_current++;
-			return Source[_current - 1];
-		}
-
 		private void AddToken(TokenType type)
 		{
 			AddToken(type, null);
@@ -236,6 +187,65 @@ namespace CSharpLox
 			_tokens.Add(new Token(type, text, literal, _line));
 		}
 
+		[DebuggerStepThrough]
+		private bool Match(char expected)
+		{
+			if (IsAtEnd()) return false;
+			if (Source[_current] != expected) return false;
+
+			_current++;
+			return true;
+		}
+
+		[DebuggerStepThrough]
+		private char Peek()
+		{
+			if (IsAtEnd()) return '\0';
+			return Source[_current];
+		}
+
+		[DebuggerStepThrough]
+		private char PeekNext()
+		{
+			if (_current + 1 >= Source.Length) return '\0';
+			return Source[_current + 1];
+		}
+
+		[DebuggerStepThrough]
+		private bool IsAlpha(char c)
+		{
+			return
+				(c >= 'a' && c <= 'z') ||
+				(c >= 'A' && c <= 'Z') ||
+				c == '_';
+		}
+
+		[DebuggerStepThrough]
+		private bool IsAlphaNumeric(char c)
+		{
+			return IsAlpha(c) || IsDigit(c);
+		}
+
+		[DebuggerStepThrough]
+		private bool IsDigit(char c)
+		{
+			return c >= '0' && c <= '9';
+		}
+
+		[DebuggerStepThrough]
+		private bool IsAtEnd()
+		{
+			return _current >= Source.Length;
+		}
+
+		[DebuggerStepThrough]
+		private char Advance()
+		{
+			_current++;
+			return Source[_current - 1];
+		}
+
+		[DebuggerStepThrough]
 		private string Substring(int start, int end)
 		{
 			return Source.Substring(start, end - start);

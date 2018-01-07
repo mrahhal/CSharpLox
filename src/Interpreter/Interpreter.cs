@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using static CSharpLox.TokenType;
 
 namespace CSharpLox
@@ -49,23 +50,6 @@ namespace CSharpLox
 		public void Resolve(Expr expr, int depth)
 		{
 			_locals[expr] = depth;
-		}
-
-		private String Stringify(object obj)
-		{
-			if (obj == null) return "nil";
-
-			if (obj is double)
-			{
-				var text = obj.ToString();
-				if (text.EndsWith(".0"))
-				{
-					text = text.Substring(0, text.Length - 2);
-				}
-				return text;
-			}
-
-			return obj.ToString();
 		}
 
 		public object VisitAssignExpr(Expr.Assign expr)
@@ -269,11 +253,6 @@ namespace CSharpLox
 			return _globals.Get(name);
 		}
 
-		private object Evaluate(Expr expr)
-		{
-			return expr.Accept(this);
-		}
-
 		private bool IsTruthy(object obj)
 		{
 			switch (obj)
@@ -291,18 +270,6 @@ namespace CSharpLox
 			if (a == null) return false;
 
 			return a.Equals(b);
-		}
-
-		private void CheckNumberOperand(Token op, object operand)
-		{
-			if (operand is double) return;
-			throw new RuntimeError(op, "Operand must be a number.");
-		}
-
-		private void CheckNumberOperands(Token op, object left, object right)
-		{
-			if (left is double && right is Double) return;
-			throw new RuntimeError(op, "Operands must be numbers.");
 		}
 
 		public object VisitBlockStmt(Stmt.Block stmt)
@@ -427,9 +394,48 @@ namespace CSharpLox
 			return null;
 		}
 
+		[DebuggerStepThrough]
 		private void Execute(Stmt stmt)
 		{
 			stmt.Accept(this);
+		}
+
+		[DebuggerStepThrough]
+		private object Evaluate(Expr expr)
+		{
+			return expr.Accept(this);
+		}
+
+		[DebuggerStepThrough]
+		private void CheckNumberOperand(Token op, object operand)
+		{
+			if (operand is double) return;
+			throw new RuntimeError(op, "Operand must be a number.");
+		}
+
+		[DebuggerStepThrough]
+		private void CheckNumberOperands(Token op, object left, object right)
+		{
+			if (left is double && right is Double) return;
+			throw new RuntimeError(op, "Operands must be numbers.");
+		}
+
+		[DebuggerStepThrough]
+		private String Stringify(object obj)
+		{
+			if (obj == null) return "nil";
+
+			if (obj is double)
+			{
+				var text = obj.ToString();
+				if (text.EndsWith(".0"))
+				{
+					text = text.Substring(0, text.Length - 2);
+				}
+				return text;
+			}
+
+			return obj.ToString();
 		}
 	}
 }

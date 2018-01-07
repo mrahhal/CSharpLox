@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using static CSharpLox.TokenType;
 
 namespace CSharpLox
@@ -445,6 +446,7 @@ namespace CSharpLox
 			throw Error(Peek(), "Expected expression.");
 		}
 
+		[DebuggerStepThrough]
 		private Token Consume(TokenType type, String message)
 		{
 			if (Check(type)) return Advance();
@@ -452,12 +454,14 @@ namespace CSharpLox
 			throw Error(Peek(), message);
 		}
 
+		[DebuggerStepThrough]
 		private ParseError Error(Token token, String message)
 		{
 			_logger.Error(token, message);
 			return new ParseError();
 		}
 
+		[DebuggerStepThrough]
 		private void Synchronize()
 		{
 			Advance();
@@ -483,6 +487,7 @@ namespace CSharpLox
 			}
 		}
 
+		[DebuggerStepThrough]
 		private bool Match(params TokenType[] types)
 		{
 			foreach (var type in types)
@@ -497,28 +502,33 @@ namespace CSharpLox
 			return false;
 		}
 
+		[DebuggerStepThrough]
 		private bool Check(TokenType tokenType)
 		{
 			if (IsAtEnd()) return false;
 			return Peek().Type == tokenType;
 		}
 
+		[DebuggerStepThrough]
 		private Token Advance()
 		{
 			if (!IsAtEnd()) _current++;
 			return Previous();
 		}
 
+		[DebuggerStepThrough]
 		private bool IsAtEnd()
 		{
 			return Peek().Type == EOF;
 		}
 
+		[DebuggerStepThrough]
 		private Token Peek()
 		{
 			return Tokens[_current];
 		}
 
+		[DebuggerStepThrough]
 		private Token Previous()
 		{
 			return Tokens[_current - 1];

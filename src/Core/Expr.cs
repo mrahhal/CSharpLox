@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace CSharpLox
 {
@@ -44,6 +45,7 @@ namespace CSharpLox
 			public Token Name { get; }
 			public Expr Value { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitAssignExpr(this);
@@ -63,6 +65,7 @@ namespace CSharpLox
 			public Token Operator { get; }
 			public Expr Right { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitBinaryExpr(this);
@@ -82,6 +85,7 @@ namespace CSharpLox
 			public Token Paren { get; }
 			public List<Expr> Arguments { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitCallExpr(this);
@@ -99,6 +103,7 @@ namespace CSharpLox
 			public Expr Object { get; }
 			public Token Name { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitGetExpr(this);
@@ -114,6 +119,7 @@ namespace CSharpLox
 
 			public Expr Expression { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitGroupingExpr(this);
@@ -129,6 +135,7 @@ namespace CSharpLox
 
 			public object Value { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitLiteralExpr(this);
@@ -148,6 +155,7 @@ namespace CSharpLox
 			public Token Operator { get; }
 			public Expr Right { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitLogicalExpr(this);
@@ -167,6 +175,7 @@ namespace CSharpLox
 			public Token Name { get; }
 			public Expr Value { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitSetExpr(this);
@@ -184,6 +193,7 @@ namespace CSharpLox
 			public Token Keyword { get; }
 			public Token Method { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitSuperExpr(this);
@@ -199,6 +209,7 @@ namespace CSharpLox
 
 			public Token Keyword { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitThisExpr(this);
@@ -216,6 +227,7 @@ namespace CSharpLox
 			public Token Operator { get; }
 			public Expr Right { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitUnaryExpr(this);
@@ -231,6 +243,7 @@ namespace CSharpLox
 
 			public Token Name { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitVariableExpr(this);

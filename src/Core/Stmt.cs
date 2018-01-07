@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace CSharpLox
 {
@@ -36,6 +37,7 @@ namespace CSharpLox
 
 			public List<Stmt> Statements { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitBlockStmt(this);
@@ -53,8 +55,9 @@ namespace CSharpLox
 
 			public Token Name { get; }
 			public Expr Superclass { get; }
-			public List<Stmt.Function> Methods { get; }
+			public List<Function> Methods { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitClassStmt(this);
@@ -70,6 +73,7 @@ namespace CSharpLox
 
 			public Expr InnerExpression { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitExpressionStmt(this);
@@ -89,6 +93,7 @@ namespace CSharpLox
 			public List<Token> Parameters { get; }
 			public List<Stmt> Body { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitFunctionStmt(this);
@@ -108,6 +113,7 @@ namespace CSharpLox
 			public Stmt ThenBranch { get; }
 			public Stmt ElseBranch { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitIfStmt(this);
@@ -123,6 +129,7 @@ namespace CSharpLox
 
 			public Expr InnerExpression { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitPrintStmt(this);
@@ -140,6 +147,7 @@ namespace CSharpLox
 			public Token Keyword { get; }
 			public Expr Value { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitReturnStmt(this);
@@ -157,6 +165,7 @@ namespace CSharpLox
 			public Token Name { get; }
 			public Expr Initializer { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitVarStmt(this);
@@ -174,6 +183,7 @@ namespace CSharpLox
 			public Expr Condition { get; }
 			public Stmt Body { get; }
 
+			[DebuggerStepThrough]
 			public override R Accept<R>(IVisitor<R> visitor)
 			{
 				return visitor.VisitWhileStmt(this);
