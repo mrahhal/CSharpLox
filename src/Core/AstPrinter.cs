@@ -1,8 +1,10 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace CSharpLox
 {
-	public class AstPrinterVisitor : Expr.IVisitor<string>, Stmt.IVisitor<string>
+	public class AstPrinter : Expr.IVisitor<string>, Stmt.IVisitor<string>
 	{
 		public string Print(Expr expr)
 		{
@@ -201,21 +203,39 @@ namespace CSharpLox
 			{
 				builder.Append(" ");
 
-				if (part is Expr expr)
+				switch (part)
 				{
-					builder.Append(expr.Accept(this));
-				}
-				else if (part is Stmt stmt)
-				{
-					builder.Append(stmt.Accept(this));
-				}
-				else if (part is Token token)
-				{
-					builder.Append(token.Lexeme);
-				}
-				else
-				{
-					builder.Append(part);
+					case Expr expr:
+						builder.Append(expr.Accept(this));
+						break;
+
+					case Stmt stmt:
+						builder.Append(stmt.Accept(this));
+						break;
+
+					case Token token:
+						builder.Append(token.Lexeme);
+						break;
+
+					case IEnumerable<Expr> expressions:
+						if (expressions.Any())
+						{
+							builder.Append("[");
+							foreach (var expr in expressions)
+							{
+								if (expr != expressions.First())
+								{
+									builder.Append(", ");
+								}
+								builder.Append(expr.Accept(this));
+							}
+							builder.Append("]");
+						}
+						break;
+
+					default:
+						builder.Append(part.ToString());
+						break;
 				}
 			}
 
