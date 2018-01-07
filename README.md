@@ -24,7 +24,7 @@ Hello, World!
 $ cslox [script]
 ```
 
-You can also enter prompt mode by not specifying a script:
+You can also enter prompt mode by not specifying a script path:
 ```
 $ cslox
 > print 41 + 1;
