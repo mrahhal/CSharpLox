@@ -55,7 +55,7 @@ greeter.greet();
 
 ## Grammar
 
-The [context-free-grammar.md](context-free-grammar.md) file contains the grammar of the whole language, expressed using a similar metasyntax to [EBNF](https://en.wikipedia.org/wiki/Extended_Backus–Naur_form).
+The [context-free-grammar](context-free-grammar.md) file contains the grammar of the whole language, expressed using a similar metasyntax to [EBNF](https://en.wikipedia.org/wiki/Extended_Backus–Naur_form).
 
 ## Project Structure
 
