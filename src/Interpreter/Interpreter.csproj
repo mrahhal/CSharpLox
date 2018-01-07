@@ -6,6 +6,7 @@
     <RootNamespace>CSharpLox</RootNamespace>
     <AssemblyName>cslox</AssemblyName>
     <LangVersion>latest</LangVersion>
+    <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
