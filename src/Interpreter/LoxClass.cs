@@ -4,11 +4,13 @@ namespace CSharpLox
 {
 	public class LoxClass : ILoxCallable
 	{
+		private readonly LoxClass _superclass;
 		private readonly Dictionary<string, LoxFunction> _methods;
 
-		public LoxClass(string name, Dictionary<string, LoxFunction> methods)
+		public LoxClass(string name, LoxClass superclass, Dictionary<string, LoxFunction> methods)
 		{
 			Name = name;
+			_superclass = superclass;
 			_methods = methods;
 		}
 
@@ -41,6 +43,11 @@ namespace CSharpLox
 			if (_methods.TryGetValue(name, out var value))
 			{
 				return value.Bind(instance);
+			}
+
+			if (_superclass != null)
+			{
+				return _superclass.FindMethod(instance, name);
 			}
 
 			return null;

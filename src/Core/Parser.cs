@@ -55,6 +55,14 @@ namespace CSharpLox
 		private Stmt ClassDeclaration()
 		{
 			var name = Consume(IDENTIFIER, "Expected class name.");
+
+			Expr superclass = null;
+			if (Match(LESS))
+			{
+				Consume(IDENTIFIER, "Expected superclass.");
+				superclass = new Expr.Variable(Previous());
+			}
+
 			Consume(LEFT_BRACE, "Expected '{' before class body.");
 
 			var methods = new List<Stmt.Function>();
@@ -65,7 +73,7 @@ namespace CSharpLox
 
 			Consume(RIGHT_BRACE, "Expected '}' after class body.");
 
-			return new Stmt.Class(name, null, methods);
+			return new Stmt.Class(name, superclass, methods);
 		}
 
 		private Stmt.Function Function(string kind)
@@ -410,6 +418,14 @@ namespace CSharpLox
 			if (Match(NUMBER, STRING))
 			{
 				return new Expr.Literal(Previous().Literal);
+			}
+
+			if (Match(SUPER))
+			{
+				var keyword = Previous();
+				Consume(DOT, "Expected '.' after 'super'.");
+				var method = Consume(IDENTIFIER, "Expected superclass method name.");
+				return new Expr.Super(keyword, method);
 			}
 
 			if (Match(THIS)) return new Expr.This(Previous());

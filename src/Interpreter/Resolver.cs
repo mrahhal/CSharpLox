@@ -16,7 +16,8 @@ namespace CSharpLox
 		private enum ClassType
 		{
 			NONE,
-			CLASS
+			CLASS,
+			SUBCLASS
 		}
 
 		private readonly Interpreter _interpreter;
@@ -83,6 +84,14 @@ namespace CSharpLox
 			var enclosingClass = _currentClass;
 			_currentClass = ClassType.CLASS;
 
+			if (stmt.Superclass != null)
+			{
+				_currentClass = ClassType.SUBCLASS;
+				Resolve(stmt.Superclass);
+				BeginScope();
+				_scopes.Peek()["super"] = true;
+			}
+
 			BeginScope();
 			_scopes.Peek()["this"] = true;
 
@@ -97,6 +106,8 @@ namespace CSharpLox
 			}
 
 			EndScope();
+
+			if (stmt.Superclass != null) EndScope();
 
 			_currentClass = enclosingClass;
 			return null;
@@ -183,7 +194,17 @@ namespace CSharpLox
 
 		public object VisitSuperExpr(Expr.Super expr)
 		{
-			throw new NotImplementedException();
+			if (_currentClass == ClassType.NONE)
+			{
+				_logger.Error(expr.Keyword, "Cannot use 'super' outside of a class.");
+			}
+			else if (_currentClass != ClassType.SUBCLASS)
+			{
+				_logger.Error(expr.Keyword, "Cannot use 'super' in a class with no superclass.");
+			}
+
+			ResolveLocal(expr, expr.Keyword);
+			return null;
 		}
 
 		public object VisitThisExpr(Expr.This expr)

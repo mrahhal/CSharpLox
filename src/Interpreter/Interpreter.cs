@@ -167,7 +167,8 @@ namespace CSharpLox
 		public object VisitGetExpr(Expr.Get expr)
 		{
 			var @object = Evaluate(expr.Object);
-			if (@object is LoxInstance loxInstance) {
+			if (@object is LoxInstance loxInstance)
+			{
 				return loxInstance.Get(expr.Name);
 			}
 
@@ -216,7 +217,20 @@ namespace CSharpLox
 
 		public object VisitSuperExpr(Expr.Super expr)
 		{
-			throw new NotImplementedException();
+			var distance = _locals[expr];
+			var superclass = (LoxClass)_environment.GetAt(distance, "super");
+
+			// "this" is always one level nearer than "super"'s environment.
+			var @object = (LoxInstance)_environment.GetAt(distance - 1, "this");
+
+			var method = superclass.FindMethod(@object, expr.Method.Lexeme);
+
+			if (method == null)
+			{
+				throw new RuntimeError(expr.Method, $"Undefined property '{expr.Method.Lexeme}'.");
+			}
+
+			return method;
 		}
 
 		public object VisitThisExpr(Expr.This expr)
@@ -318,6 +332,18 @@ namespace CSharpLox
 		public object VisitClassStmt(Stmt.Class stmt)
 		{
 			_environment.Define(stmt.Name.Lexeme, null);
+			object superclass = null;
+			if (stmt.Superclass != null)
+			{
+				superclass = Evaluate(stmt.Superclass);
+				if (!(superclass is LoxClass))
+				{
+					throw new RuntimeError(stmt.Name, "Superclass must be a class.");
+				}
+				_environment = new EnvironmentScope(_environment);
+				_environment.Define("super", superclass);
+			}
+
 			var methods = new Dictionary<string, LoxFunction>();
 			foreach (var method in stmt.Methods)
 			{
@@ -325,7 +351,13 @@ namespace CSharpLox
 				methods[method.Name.Lexeme] = function;
 			}
 
-			var klass = new LoxClass(stmt.Name.Lexeme, methods);
+			var klass = new LoxClass(stmt.Name.Lexeme, (LoxClass)superclass, methods);
+
+			if (superclass != null)
+			{
+				_environment = _environment.Enclosing;
+			}
+
 			_environment.Assign(stmt.Name, klass);
 			return null;
 		}

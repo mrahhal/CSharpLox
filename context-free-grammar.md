@@ -26,7 +26,8 @@ declaration    → classDecl
                | varDecl
                | statement ;
 
-classDecl      → "class" IDENTIFIER "{" function* "}" ;
+classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )?
+                 "{" function* "}" ;
 
 funDecl        → "fun" function ;
 function       → IDENTIFIER "(" parameters? ")" block ;
@@ -70,7 +71,6 @@ unary          → ( "!" | "-" ) unary | call ;
 call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
 arguments      → expression ( "," expression )* ;
 primary        → "true" | "false" | "nil" | "this"
-               | NUMBER | STRING
-               | "(" expression ")"
-               | IDENTIFIER ;
+               | NUMBER | STRING | IDENTIFIER | "(" expression ")"
+               | "super" "." IDENTIFIER ;
 ```
