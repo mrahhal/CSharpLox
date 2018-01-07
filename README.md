@@ -1,4 +1,4 @@
-# CSharpLox
+﻿# CSharpLox
 
 A cross-platform compiler/interpreter .NET Standard implementation of the [Lox](https://github.com/munificent/craftinginterpreters) language.
 
@@ -16,6 +16,19 @@ After building, run `basic-run.ps1` to test drive the built interpreter (on wind
 ```
 $ ./basic-run
 Hello, World!
+```
+
+## Usage
+
+```
+$ cslox [script]
+```
+
+You can also enter prompt mode by not specifying a script:
+```
+$ cslox
+> print 41 + 1;
+42
 ```
 
 ## The syntax
@@ -39,3 +52,7 @@ var greeter = Greeter("mrahhal");
 
 greeter.greet();
 ```
+
+## Grammar
+
+The [context-free-grammar.md](context-free-grammar.md) file contains the grammar of the whole language, expressed using a similar metasyntax to [EBNF](https://en.wikipedia.org/wiki/Extended_Backus–Naur_form).
