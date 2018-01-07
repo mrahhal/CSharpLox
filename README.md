@@ -31,6 +31,11 @@ $ cslox
 42
 ```
 
+To print the ast and exit:
+```
+$ cslox [script] --print-ast
+```
+
 ## Syntax
 
 Lox is a simple dynamic programming language that supports object oriented aspects. It supports classes and inheritance.

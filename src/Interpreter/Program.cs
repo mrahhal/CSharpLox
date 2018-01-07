@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,18 +26,27 @@ namespace CSharpLox
 
 		private async Task RunInternalAsync()
 		{
-			if (_args.Length > 1)
+			if (ShouldPrintHelp())
 			{
-				Console.WriteLine("Usage: cslox [script]");
+				PrintHelp();
 			}
-			else if (_args.Length == 1)
-			{
-				await RunFileAsync(_args[0]);
-			}
-			else
+			else if (_args.Length == 0)
 			{
 				await RunPromptAsync();
 			}
+			else
+			{
+				await RunFileAsync(_args[0]);
+			}
+		}
+
+		private static void PrintHelp()
+		{
+			Console.WriteLine("Usage: cslox [script]");
+			Console.WriteLine();
+			Console.WriteLine("Options:");
+			Console.WriteLine("--help       Show help");
+			Console.WriteLine("--print-ast  Print the ast and exit");
 		}
 
 		private async Task RunFileAsync(string filePath)
@@ -84,6 +94,16 @@ namespace CSharpLox
 			// Stop if there was a syntax error.
 			if (_logger.HadError) return Task.CompletedTask;
 
+			if (ShouldPrintAst())
+			{
+				var astPrinter = new AstPrinter();
+				foreach (var statement in statements)
+				{
+					Console.WriteLine(astPrinter.Print(statement));
+				}
+				return Task.CompletedTask;
+			}
+
 			var resolver = new Resolver(_interpreter, _logger);
 			resolver.Resolve(statements);
 
@@ -92,6 +112,16 @@ namespace CSharpLox
 			_interpreter.Interpret(statements);
 
 			return Task.CompletedTask;
+		}
+
+		private bool ShouldPrintAst()
+		{
+			return _args.Contains("--print-ast");
+		}
+
+		private bool ShouldPrintHelp()
+		{
+			return _args.Contains("--help");
 		}
 	}
 }
