@@ -56,3 +56,14 @@ greeter.greet();
 ## Grammar
 
 The [context-free-grammar.md](context-free-grammar.md) file contains the grammar of the whole language, expressed using a similar metasyntax to [EBNF](https://en.wikipedia.org/wiki/Extended_Backus–Naur_form).
+
+## Project Structure
+
+- `Core`: The core project, a class lib, handles scanning and parsing and lower level operations.
+- `Interpreter`: The interpreter project, a cross platform executable that evaluates the program in C#.
+
+## Further Improvements
+
+- Modules, importing other files
+- More native functions. Right now, there's only a `clock` function.
+- A bytecode compiler
