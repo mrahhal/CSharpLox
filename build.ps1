@@ -1,6 +1,14 @@
 $pwd = (pwd).Path;
 $artifacts = $pwd + "/artifacts";
+$interpreter = $artifacts + "/interpreter";
 
-Remove-Item $artifacts -Force -Recurse
+function BuildInterpreter($dir, $runtime)
+{
+	dotnet build ./src/Interpreter -o $interpreter/$dir -r $runtime
+}
 
-dotnet build ./src/Interpreter -o $artifacts/interpreter -r win10-x64
+Remove-Item $artifacts -Force -Recurse -ErrorAction Ignore
+
+BuildInterpreter "win" "win10-x64"
+BuildInterpreter "ubuntu" "ubuntu.16.04-x64"
+BuildInterpreter "osx" "osx.10.11-x64"
