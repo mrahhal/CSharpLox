@@ -7,7 +7,7 @@ namespace CSharpLox
 {
 	public class Parser
 	{
-		public class ParseError : Exception
+		private class ParseError : Exception
 		{
 		}
 
