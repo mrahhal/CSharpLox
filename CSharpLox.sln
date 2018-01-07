@@ -20,6 +20,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "src\Core\Core.cspro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interpreter", "src\Interpreter\Interpreter.csproj", "{DB9329F9-B202-449F-97C6-6937FDAD4589}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{31B1FC2C-DF70-4471-B5AD-A4798B096325}"
+	ProjectSection(SolutionItems) = preProject
+		samples\basic.lox = samples\basic.lox
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
