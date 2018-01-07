@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CSharpLox
 {
-	public class Lox
+	public class Program
 	{
 		private readonly ConsoleLogger _logger = new ConsoleLogger();
 		private readonly Interpreter _interpreter;
@@ -13,10 +13,10 @@ namespace CSharpLox
 
 		public static Task Main(string[] args)
 		{
-			return new Lox(args).RunInternalAsync();
+			return new Program(args).RunInternalAsync();
 		}
 
-		public Lox(string[] args)
+		public Program(string[] args)
 		{
 			_args = args;
 
