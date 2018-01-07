@@ -31,7 +31,7 @@ $ cslox
 42
 ```
 
-## The syntax
+## Syntax
 
 Lox is a simple dynamic programming language that supports object oriented aspects. It supports classes and inheritance.
 
